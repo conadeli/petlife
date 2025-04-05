@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://3657979.xyz/</loc>
+    <lastmod>2025-04-06</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://3657979.xyz/about</loc>
+    <lastmod>2025-04-06</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://3657979.xyz/contact</loc>
+    <lastmod>2025-04-06</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <!-- 여기에 더 많은 페이지를 추가하세요 -->
+</urlset>
