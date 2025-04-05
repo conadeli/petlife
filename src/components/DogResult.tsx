@@ -107,8 +107,9 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
     if (data.genetic === 'yes') geneticAdjustment = -1.0;
 
     let skinAdjustment = 0;
-    if (data.skinDisease === 'mild') skinAdjustment = -0.3;
-    else if (data.skinDisease === 'severe') skinAdjustment = -0.8;
+const skinStatus = data.skinDisease?.toLowerCase().trim();
+if (skinStatus === 'mild') skinAdjustment = -0.3;
+else if (skinStatus === 'severe') skinAdjustment = -0.8;
 
     return Math.round(
       (baseAge + totalAdjustment + weightAdjustment + healthAdjustment + geneticAdjustment + skinAdjustment) * 10
