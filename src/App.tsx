@@ -68,8 +68,8 @@ function App() {
 
           {/* 수명 계산기와 건강 정보 사이의 광고 영역 */}
           <div className="my-8 flex justify-center">
-            <Advertisement type="banner" className="hidden md:block" />
-            <Advertisement type="square" className="md:hidden" />
+            <Advertisement type="banner" variant="coupang" className="hidden md:block" />
+            <Advertisement type="square" variant="coupang" className="md:hidden" />
           </div>
         </div>
       </main>
