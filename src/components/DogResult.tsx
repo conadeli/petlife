@@ -107,12 +107,19 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
     if (data.genetic === 'yes') geneticAdjustment = -1.0;
 
     let skinAdjustment = 0;
-const skinStatus = data.skinDisease?.toLowerCase().trim();
-if (skinStatus === 'mild') skinAdjustment = -0.3;
-else if (skinStatus === 'severe') skinAdjustment = -0.8;
+    const skinStatus = data.skinDisease?.toLowerCase().trim();
+    if (skinStatus === 'mild') skinAdjustment = -0.3;
+    else if (skinStatus === 'severe') skinAdjustment = -0.8;
+
+    let birthAdjustment = 0;
+    if (data.gender === 'female' && data.neutered === 'no') {
+      if (data.birthExperience === 'none') birthAdjustment = -1.0;
+      else if (data.birthExperience === 'once') birthAdjustment = -0.3;
+      else if (data.birthExperience === 'multiple') birthAdjustment = 0;
+    }
 
     return Math.round(
-      (baseAge + totalAdjustment + weightAdjustment + healthAdjustment + geneticAdjustment + skinAdjustment) * 10
+      (baseAge + totalAdjustment + weightAdjustment + healthAdjustment + geneticAdjustment + skinAdjustment + birthAdjustment) * 10
     ) / 10;
   };
 
@@ -125,6 +132,7 @@ else if (skinStatus === 'severe') skinAdjustment = -0.8;
       생활환경: 0
     };
 
+    // 운동량은 하루 평균 분 기준
     factors.운동 = data.exercise > 300 ? 1 :
                    data.exercise > 150 ? 0.5 :
                    data.exercise < 60 ? -0.5 : 0;
