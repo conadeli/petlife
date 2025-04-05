@@ -4,16 +4,16 @@ interface AdvertisementProps {
   type: 'banner' | 'square';
   className?: string;
   slot?: string;
-  variant?: 'google' | 'coupang' | 'custom'; // ⭐️ 광고 유형 선택
+  variant?: 'google' | 'coupang' | 'custom';
 }
 
 export const Advertisement: React.FC<AdvertisementProps> = ({
   type,
   className = '',
   slot,
-  variant = 'custom', // 기본값은 custom 광고
+  variant = 'custom',
 }) => {
-  // Google AdSense 광고
+  // ✅ Google AdSense 광고
   const renderGoogleAd = () => {
     if (!slot) return null;
 
@@ -33,18 +33,22 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
     );
   };
 
-  // 기본 커스텀 광고
+  // ✅ Custom 기본 광고
   const renderCustomAd = () => {
     return (
-      <div className={`
-        flex items-center justify-center
-        ${type === 'banner' ? 'h-[90px] w-[728px]' : 'h-[250px] w-[300px]'}
-        bg-gradient-to-r from-blue-50 to-blue-100
-        border border-blue-200 rounded-lg
-        p-4
-      `}>
+      <div
+        className={`
+          flex items-center justify-center
+          ${type === 'banner' ? 'h-[90px] w-[728px]' : 'h-[250px] w-[300px]'}
+          bg-gradient-to-r from-blue-50 to-blue-100
+          border border-blue-200 rounded-lg
+          p-4
+        `}
+      >
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-blue-800 mb-2">맞춤형 광고 영역</h3>
+          <h3 className="text-lg font-semibold text-blue-800 mb-2">
+            맞춤형 광고 영역
+          </h3>
           <p className="text-sm text-blue-600">
             {type === 'banner' ? '728x90 배너 광고' : '300x250 사각형 광고'}
           </p>
@@ -53,12 +57,12 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
     );
   };
 
-  // ✅ 수정된 쿠팡 파트너스 광고
+  // ✅ 흔들림 애니메이션이 적용된 쿠팡 광고
   const renderCoupangAd = () => {
     const imageUrl =
       type === 'banner'
         ? '/coupang-banner-728x90.png'
-        : '/coupang-square-300x250.png'; // ✅ 수정된 경로
+        : '/coupang-square-300x250.png';
 
     const coupangLink = 'https://link.coupang.com/a/cmW20x';
 
@@ -70,6 +74,7 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
         className={`
           block border rounded-lg overflow-hidden shadow
           ${type === 'banner' ? 'w-[728px] h-[90px]' : 'w-[300px] h-[250px]'}
+          animate-wiggle
         `}
       >
         <img
@@ -81,16 +86,12 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
     );
   };
 
-  // 렌더링 분기
+  // ✅ 렌더링 분기
   const renderAd = () => {
     if (variant === 'google' && slot) return renderGoogleAd();
     if (variant === 'coupang') return renderCoupangAd();
     return renderCustomAd();
   };
 
-  return (
-    <div className={`ad-container ${className}`}>
-      {renderAd()}
-    </div>
-  );
+  return <div className={`ad-container ${className}`}>{renderAd()}</div>;
 };
