@@ -11,6 +11,7 @@ import {
   Legend
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
+import { calculateWeightStatus } from '../utils/weightCalculator';
 
 ChartJS.register(
   RadialLinearScale,
@@ -27,23 +28,29 @@ interface DogResultProps {
 
 export const DogResult: React.FC<DogResultProps> = ({ data }) => {
   const calculateLifeExpectancy = () => {
-    let baseAge = 12; // 기본 수명
+    let baseAge = 12;
 
-    // 품종별 기본 수명 조정
+    // 품종에 따른 수명 보정
     const breedAgeAdjustments: { [key: string]: number } = {
       "치와와": 2,
       "포메라니안": 1,
       "말티즈": 1,
-      // 다른 품종들의 수명 조정값 추가
+      // 필요한 경우 추가
     };
-
     baseAge += breedAgeAdjustments[data.breed] || 0;
 
-    // 각 요소별 수명 영향 계산
+    // 건강 요소 점수 합산
     const factors = calculateFactors();
     const totalAdjustment = Object.values(factors).reduce((sum, value) => sum + value, 0);
 
-    return Math.round((baseAge + totalAdjustment) * 10) / 10;
+    // ✅ 체중 상태에 따른 수명 보정
+    const weightStatus = calculateWeightStatus(data.breed, data.weight, data.age);
+    const weightAdjustment =
+      weightStatus.status === 'underweight' ? -0.5 :
+      weightStatus.status === 'overweight' ? -1.5 : 0;
+
+    // 수명 최종 계산
+    return Math.round((baseAge + totalAdjustment + weightAdjustment) * 10) / 10;
   };
 
   const calculateFactors = () => {
@@ -55,30 +62,30 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
       생활환경: 0
     };
 
-    // 운동 점수
+    // 운동
     factors.운동 = data.exercise > 300 ? 1 : 
                    data.exercise > 150 ? 0.5 : 
                    data.exercise < 60 ? -0.5 : 0;
 
-    // 영양 점수
+    // 영양
     factors.영양 = data.diet === 'dog-food' ? 0.5 :
                    data.diet === 'mixed' ? 0 : -0.5;
     factors.영양 += data.supplements === 'yes' ? 0.3 : 0;
 
-    // 건강관리 점수
+    // 건강관리
     factors.건강관리 = data.vaccination === 'regular' ? 0.5 : -0.5;
     factors.건강관리 += data.checkup === 'regular' ? 0.5 : -0.3;
     factors.건강관리 += data.dental === 'regular' ? 0.3 : 
-                       data.dental === 'sometimes' ? 0 : -0.3;
+                         data.dental === 'sometimes' ? 0 : -0.3;
 
-    // 스트레스 점수
+    // 스트레스
     factors.스트레스 = data.stress === 'low' ? 0.5 :
                       data.stress === 'medium' ? 0 : -0.5;
 
-    // 생활환경 점수
+    // 생활환경
     factors.생활환경 = data.hygiene === 'regular' ? 0.3 : -0.3;
     factors.생활환경 += data.training === 'often' ? 0.4 :
-                       data.training === 'sometimes' ? 0.2 : -0.2;
+                         data.training === 'sometimes' ? 0.2 : -0.2;
 
     return factors;
   };
@@ -113,16 +120,15 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
 
   return (
     <div className="space-y-6">
-      {/* 결과 페이지 상단 광고 */}
+      {/* 광고 */}
       <div className="flex justify-center mb-6">
         <Advertisement type="banner" className="hidden md:block" />
         <Advertisement type="square" className="md:hidden" />
       </div>
 
+      {/* 수명 결과 */}
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          예상 수명 분석 결과
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">예상 수명 분석 결과</h2>
         <div className="text-4xl font-bold text-blue-600 mb-4">
           {lifeExpectancy} 년
         </div>
@@ -131,15 +137,15 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
         </p>
       </div>
 
+      {/* 레이더 차트 */}
       <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">
-          건강 요소 분석
-        </h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">건강 요소 분석</h3>
         <div className="h-80">
           <Radar data={chartData} options={chartOptions} />
         </div>
       </div>
 
+      {/* 요소별 영향 */}
       <div className="bg-gray-50 p-4 rounded-lg">
         <h3 className="text-lg font-medium text-gray-900 mb-3">
           수명에 영향을 주는 주요 요인
@@ -162,6 +168,7 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
         </ul>
       </div>
 
+      {/* 건강 조언 */}
       <div className="bg-blue-50 p-4 rounded-lg">
         <h3 className="text-lg font-medium text-blue-900 mb-2">
           건강 관리 조언
