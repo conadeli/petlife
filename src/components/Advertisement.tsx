@@ -13,7 +13,7 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
   slot,
   variant = 'custom', // 기본값은 custom 광고
 }) => {
-  // Google AdSense 광고를 위한 컴포넌트
+  // Google AdSense 광고
   const renderGoogleAd = () => {
     if (!slot) return null;
 
@@ -33,7 +33,7 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
     );
   };
 
-  // 커스텀 광고
+  // 기본 커스텀 광고
   const renderCustomAd = () => {
     return (
       <div className={`
@@ -53,12 +53,12 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
     );
   };
 
-  // ✅ 쿠팡 파트너스 광고 배너
+  // ✅ 수정된 쿠팡 파트너스 광고
   const renderCoupangAd = () => {
     const imageUrl =
       type === 'banner'
-        ? '/ads/coupang-banner-728x90.png'
-        : '/ads/coupang-square-300x250.png';
+        ? '/coupang-banner-728x90.png'
+        : '/coupang-square-300x250.png'; // ✅ 수정된 경로
 
     const coupangLink = 'https://link.coupang.com/a/cmW20x';
 
@@ -81,7 +81,7 @@ export const Advertisement: React.FC<AdvertisementProps> = ({
     );
   };
 
-  // 렌더링 조건 분기
+  // 렌더링 분기
   const renderAd = () => {
     if (variant === 'google' && slot) return renderGoogleAd();
     if (variant === 'coupang') return renderCoupangAd();
