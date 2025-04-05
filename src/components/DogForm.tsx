@@ -183,7 +183,7 @@ export const DogForm: React.FC<DogFormProps> = ({ onSubmit }) => {
 
       <div>
         <label htmlFor="exercise" className="block text-sm font-medium text-gray-700">
-          운동량 (주당 평균 분)
+          운동량 (하루 평균 분)
         </label>
         <input
           type="number"
