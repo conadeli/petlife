@@ -30,26 +30,25 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
   const calculateLifeExpectancy = () => {
     let baseAge = 12;
 
-    // 품종에 따른 수명 보정
+    // 품종 수명 보정
     const breedAgeAdjustments: { [key: string]: number } = {
       "치와와": 2,
       "포메라니안": 1,
       "말티즈": 1,
-      // 필요한 경우 추가
+      // 추가 가능
     };
     baseAge += breedAgeAdjustments[data.breed] || 0;
 
-    // 건강 요소 점수 합산
+    // 건강 요소 점수
     const factors = calculateFactors();
     const totalAdjustment = Object.values(factors).reduce((sum, value) => sum + value, 0);
 
-    // ✅ 체중 상태에 따른 수명 보정
+    // 체중 보정
     const weightStatus = calculateWeightStatus(data.breed, data.weight, data.age);
     const weightAdjustment =
       weightStatus.status === 'underweight' ? -0.5 :
       weightStatus.status === 'overweight' ? -1.5 : 0;
 
-    // 수명 최종 계산
     return Math.round((baseAge + totalAdjustment + weightAdjustment) * 10) / 10;
   };
 
@@ -63,8 +62,8 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
     };
 
     // 운동
-    factors.운동 = data.exercise > 300 ? 1 : 
-                   data.exercise > 150 ? 0.5 : 
+    factors.운동 = data.exercise > 300 ? 1 :
+                   data.exercise > 150 ? 0.5 :
                    data.exercise < 60 ? -0.5 : 0;
 
     // 영양
@@ -75,7 +74,7 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
     // 건강관리
     factors.건강관리 = data.vaccination === 'regular' ? 0.5 : -0.5;
     factors.건강관리 += data.checkup === 'regular' ? 0.5 : -0.3;
-    factors.건강관리 += data.dental === 'regular' ? 0.3 : 
+    factors.건강관리 += data.dental === 'regular' ? 0.3 :
                          data.dental === 'sometimes' ? 0 : -0.3;
 
     // 스트레스
@@ -91,7 +90,9 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
   };
 
   const factors = calculateFactors();
-  const lifeExpectancy = calculateLifeExpectancy();
+
+  // ✅ 데이터가 바뀔 때마다 재계산되도록
+  const lifeExpectancy = React.useMemo(() => calculateLifeExpectancy(), [data]);
 
   const chartData = {
     labels: Object.keys(factors),
@@ -109,9 +110,7 @@ export const DogResult: React.FC<DogResultProps> = ({ data }) => {
   const chartOptions = {
     scales: {
       r: {
-        angleLines: {
-          display: true
-        },
+        angleLines: { display: true },
         suggestedMin: -1,
         suggestedMax: 1
       }
